@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import hashlib
-import xml.etree.cElementTree as ET
 import argparse
 import time
 

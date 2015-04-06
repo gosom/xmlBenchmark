@@ -1,6 +1,12 @@
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -42,7 +48,7 @@ public class worker {
 		return prefix + suffix;
 		
 	}
-	public static long process(String fname) throws ParserConfigurationException, SAXException, IOException, NoSuchAlgorithmException{
+	public static long process(String fname) throws ParserConfigurationException, SAXException, IOException, NoSuchAlgorithmException, TransformerException{
 		long startTime = System.currentTimeMillis();
 		File fXmlFile = new File(fname);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -68,6 +74,12 @@ public class worker {
 		}
 		long endTime = System.currentTimeMillis();
 		long elapsed = endTime - startTime;
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+		DOMSource source = new DOMSource(doc);
+		StreamResult result = new StreamResult(new File(fname + ".java.anon"));
+		transformer.transform(source, result);
 		return elapsed;
 	}
 	/**
@@ -76,8 +88,9 @@ public class worker {
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 * @throws NoSuchAlgorithmException 
+	 * @throws TransformerException 
 	 */
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, NoSuchAlgorithmException {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, NoSuchAlgorithmException, TransformerException {
 		// TODO Auto-generated method stub
 		long startTime = System.currentTimeMillis();
 		String fname = "../access_log.1.xml";
